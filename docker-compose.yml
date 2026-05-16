@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: smart-leads-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - smart-leads-network
+    restart: unless-stopped
+
+  server:
+    build: ./server
+    container_name: smart-leads-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    env_file: .env
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/smart-leads
+    networks:
+      - smart-leads-network
+    restart: unless-stopped
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  client:
+    build: ./client
+    container_name: smart-leads-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    networks:
+      - smart-leads-network
+    restart: unless-stopped
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+
+networks:
+  smart-leads-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
