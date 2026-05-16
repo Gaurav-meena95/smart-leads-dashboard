@@ -1,21 +1,64 @@
 export interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
-  role: 'admin' | 'user';
+  role: 'admin' | 'sales';
 }
 
 export interface Lead {
-  id: string;
+  _id: string;
   name: string;
   email: string;
-  phone: string;
-  status: 'new' | 'contacted' | 'qualified' | 'lost';
+  status: 'New' | 'Contacted' | 'Qualified' | 'Lost';
+  source: 'Website' | 'Instagram' | 'Referral';
+  createdBy: User;
   createdAt: string;
+  updatedAt: string;
 }
 
-export interface AuthState {
-  user: User | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface LeadsResponse {
+  success: boolean;
+  data: Lead[];
+  meta: PaginationMeta;
+}
+
+export interface LeadFilters {
+  status?: string;
+  source?: string;
+  search?: string;
+  sort?: 'latest' | 'oldest';
+  page?: number;
+  limit?: number;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  token: string;
+  user: User;
+}
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export interface RegisterInput {
+  name: string;
+  email: string;
+  password: string;
+  role?: 'admin' | 'sales';
+}
+
+export interface LeadInput {
+  name: string;
+  email: string;
+  status: Lead['status'];
+  source: Lead['source'];
 }
