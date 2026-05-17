@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, LayoutDashboard } from 'lucide-react';
+import { LogOut, Target } from 'lucide-react';
 import Button from '../ui/Button';
 
 const Navbar: React.FC = () => {
@@ -11,9 +11,9 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <LayoutDashboard className="h-8 w-8 text-blue-600" />
-            <span className="ml-2 text-xl font-bold text-gray-900">
-              Smart Leads
+            <Target className="h-8 w-8 text-blue-600" />
+            <span className="ml-2 text-xl font-bold text-gray-900 flex items-center">
+              Smart Leads <span className="h-2 w-2 rounded-full bg-blue-600 ml-1"></span>
             </span>
           </div>
           <div className="flex items-center space-x-4">

@@ -12,7 +12,7 @@ import Badge from '../components/ui/Badge';
 import Modal from '../components/ui/Modal';
 import EmptyState from '../components/ui/EmptyState';
 import Spinner from '../components/ui/Spinner';
-import { Search, Download, Plus, Pencil, Trash2, Users } from 'lucide-react';
+import { Search, Download, Plus, Pencil, Trash2, Users, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Dashboard: React.FC = () => {
@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [modalMode, setModalMode] = useState<'add' | 'edit' | 'view'>('add');
   const [currentLeadId, setCurrentLeadId] = useState<string | null>(null);
   const [formData, setFormData] = useState<LeadInput>({
     name: '',
@@ -87,8 +87,21 @@ const Dashboard: React.FC = () => {
     setIsModalOpen(true);
   };
 
+  const openViewModal = (lead: Lead) => {
+    setModalMode('view');
+    setCurrentLeadId(lead._id);
+    setFormData({
+      name: lead.name,
+      email: lead.email,
+      status: lead.status,
+      source: lead.source,
+    });
+    setIsModalOpen(true);
+  };
+
   const handleModalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (modalMode === 'view') return setIsModalOpen(false);
     try {
       setIsSubmitting(true);
       if (modalMode === 'add') {
@@ -234,11 +247,14 @@ const Dashboard: React.FC = () => {
                       {new Date(lead.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button onClick={() => openEditModal(lead)} className="text-blue-600 hover:text-blue-900 mx-2 p-1 rounded-full hover:bg-blue-50">
+                      <button onClick={() => openViewModal(lead)} className="text-gray-600 hover:text-gray-900 mx-2 p-1 rounded-full hover:bg-gray-50" title="View Details">
+                        <Eye className="h-4 w-4" />
+                      </button>
+                      <button onClick={() => openEditModal(lead)} className="text-blue-600 hover:text-blue-900 mx-2 p-1 rounded-full hover:bg-blue-50" title="Edit Lead">
                         <Pencil className="h-4 w-4" />
                       </button>
                       {user?.role === 'admin' && (
-                        <button onClick={() => handleDelete(lead._id)} className="text-red-600 hover:text-red-900 mx-2 p-1 rounded-full hover:bg-red-50">
+                        <button onClick={() => handleDelete(lead._id)} className="text-red-600 hover:text-red-900 mx-2 p-1 rounded-full hover:bg-red-50" title="Delete Lead">
                           <Trash2 className="h-4 w-4" />
                         </button>
                       )}
@@ -312,14 +328,15 @@ const Dashboard: React.FC = () => {
         </div>
       </main>
 
-      {/* Add/Edit Modal */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={modalMode === 'add' ? 'Add New Lead' : 'Edit Lead'}>
+      {/* Add/Edit/View Modal */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={modalMode === 'add' ? 'Add New Lead' : modalMode === 'edit' ? 'Edit Lead' : 'View Lead Details'}>
         <form onSubmit={handleModalSubmit} className="space-y-4 mt-4">
           <Input
             label="Name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             required
+            disabled={modalMode === 'view'}
           />
           <Input
             label="Email"
@@ -327,13 +344,15 @@ const Dashboard: React.FC = () => {
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             required
+            disabled={modalMode === 'view'}
           />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
             <select
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:opacity-75"
+              disabled={modalMode === 'view'}
             >
               <option value="New">New</option>
               <option value="Contacted">Contacted</option>
@@ -346,7 +365,8 @@ const Dashboard: React.FC = () => {
             <select
               value={formData.source}
               onChange={(e) => setFormData({ ...formData, source: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100 disabled:opacity-75"
+              disabled={modalMode === 'view'}
             >
               <option value="Website">Website</option>
               <option value="Instagram">Instagram</option>
@@ -354,10 +374,16 @@ const Dashboard: React.FC = () => {
             </select>
           </div>
           <div className="mt-6 flex justify-end gap-3">
-            <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button type="submit" loading={isSubmitting}>
-              {modalMode === 'add' ? 'Create Lead' : 'Save Changes'}
-            </Button>
+            {modalMode === 'view' ? (
+              <Button type="button" onClick={() => setIsModalOpen(false)}>Close</Button>
+            ) : (
+              <>
+                <Button type="button" variant="ghost" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                <Button type="submit" loading={isSubmitting}>
+                  {modalMode === 'add' ? 'Create Lead' : 'Save Changes'}
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </Modal>

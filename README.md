@@ -75,12 +75,12 @@ smart-leads-dashboard/
 
 | Variable | Description | Example |
 |---|---|---|
-| `PORT` | Backend server port | `5000` |
+| `PORT` | Backend server port | `3000` |
 | `NODE_ENV` | Environment mode | `development` |
 | `MONGODB_URI` | MongoDB Connection URI | `mongodb://localhost:27017/smart-leads` |
 | `JWT_SECRET` | Secret key for JWT signing | `your_super_secret_jwt_key_here` |
 | `JWT_EXPIRES_IN` | JWT expiration time | `7d` |
-| `VITE_API_URL` | Frontend API URL | `http://localhost:5000/api` |
+| `VITE_API_URL` | Frontend API URL | `http://localhost:3000/api` |
 
 ## API Documentation
 
@@ -90,6 +90,7 @@ smart-leads-dashboard/
 
 ### Leads Endpoints
 - `GET    /api/leads`
+- `GET    /api/leads/:id`
 - `POST   /api/leads`
 - `PUT    /api/leads/:id`
 - `DELETE /api/leads/:id`
@@ -103,7 +104,8 @@ smart-leads-dashboard/
 | `limit` | Number | Number of items per page |
 | `search` | String | Search query for name or email |
 | `status` | String | Filter leads by status |
-| `sort` | String | Sort order (e.g., createdAt:-1) |
+| `source` | String | Filter leads by source |
+| `sort` | String | Sort order (e.g., latest, oldest) |
 
 ## Default Admin Account
 You can login using the following credentials if the database is seeded:

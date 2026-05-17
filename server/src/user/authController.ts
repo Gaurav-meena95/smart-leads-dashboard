@@ -19,7 +19,7 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
       return res.status(400).json({ success: false, message: "Invalid email format" });
     }
 
-    const passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+    const passRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&.\-_]).{8,}$/;
     if (!passRegex.test(password)) {
       return res.status(400).json({ success: false, message: "Password must be at least 8 characters and include a special character" });
     }

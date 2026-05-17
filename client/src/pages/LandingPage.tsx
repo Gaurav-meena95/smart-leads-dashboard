@@ -1,35 +1,36 @@
 import React from 'react';
 import { Link } from 'react-router';
+import { Search, Users, BarChart, Zap, Download, Lock, Heart } from 'lucide-react';
 
 const LandingPage: React.FC = () => {
   const features = [
     {
-      icon: '🔍',
+      icon: <Search className="w-6 h-6 text-brand" />,
       title: 'Smart Search & Filters',
       description: 'Filter by status, source, and search by name or email — all filters work together instantly.',
     },
     {
-      icon: '👥',
+      icon: <Users className="w-6 h-6 text-brand" />,
       title: 'Role-Based Access',
       description: 'Admin and Sales roles with granular permissions. Right access for the right people.',
     },
     {
-      icon: '📊',
+      icon: <BarChart className="w-6 h-6 text-brand" />,
       title: 'Advanced Analytics',
       description: 'Track lead pipeline stages from New to Qualified. Know exactly where every lead stands.',
     },
     {
-      icon: '⚡',
+      icon: <Zap className="w-6 h-6 text-brand" />,
       title: 'Debounced Search',
       description: 'Lightning fast search with 500ms debounce. No unnecessary API calls, smooth experience.',
     },
     {
-      icon: '📁',
+      icon: <Download className="w-6 h-6 text-brand" />,
       title: 'CSV Export',
       description: 'Export your filtered leads to CSV in one click. Your data, your way, anytime.',
     },
     {
-      icon: '🔐',
+      icon: <Lock className="w-6 h-6 text-brand" />,
       title: 'Secure JWT Auth',
       description: 'Bank-grade security with JWT tokens and bcrypt password hashing.',
     },
@@ -243,8 +244,8 @@ const LandingPage: React.FC = () => {
             <Link to="/register" className="hover:text-text transition-colors">Register</Link>
           </div>
           
-          <div className="text-sm text-muted">
-            Built with <span className="text-red-500">❤️</span> using MERN Stack
+          <div className="text-sm text-muted flex items-center justify-center md:justify-start gap-1">
+            Built with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> using MERN Stack
           </div>
         </div>
         <div className="max-w-7xl mx-auto text-center mt-12 text-xs text-border">

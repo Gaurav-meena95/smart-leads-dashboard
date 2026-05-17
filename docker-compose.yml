@@ -1,53 +1,43 @@
 version: '3.8'
 
 services:
-  mongodb:
-    image: mongo:7.0
-    container_name: smart-leads-mongodb
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - smart-leads-network
-    restart: unless-stopped
-
   server:
-    build: ./server
-    container_name: smart-leads-backend
+    build:
+      context: ./server
     ports:
-      - "5000:5000"
-    depends_on:
-      - mongodb
-    env_file: .env
+      - "3000:3000"
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/smart-leads
-    networks:
-      - smart-leads-network
-    restart: unless-stopped
+      - PORT=3000
+      - MONGODB_URI=mongodb://mongo:27017/smart-leads
+      - MONGO_URI=mongodb://mongo:27017/smart-leads
+      - JWT_SECRET=smart_leads_dashboard
+      - sec_key=smart_leads_dashboard
+      - NODE_ENV=development
+    depends_on:
+      - mongo
     volumes:
       - ./server:/app
       - /app/node_modules
 
   client:
-    build: ./client
-    container_name: smart-leads-frontend
+    build:
+      context: ./client
     ports:
       - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000/api
     depends_on:
       - server
-    environment:
-      - VITE_API_URL=http://localhost:5000/api
-    networks:
-      - smart-leads-network
-    restart: unless-stopped
     volumes:
       - ./client:/app
       - /app/node_modules
 
-networks:
-  smart-leads-network:
-    driver: bridge
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
 
 volumes:
   mongo-data:

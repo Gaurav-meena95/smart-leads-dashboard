@@ -18,14 +18,40 @@ export const createLead = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
+export const getLeadById = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { id } = req.params;
+    const lead = await Lead.findById(id).populate('createdBy', 'name email');
+    if (!lead) {
+      return res.status(404).json({ success: false, message: "Lead not found" });
+    }
+    
+    if (req.user?.role === 'sales' && lead.createdBy?._id.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: "Unauthorized to view this lead" });
+    }
+
+    return res.status(200).json({ success: true, message: "Lead fetched successfully", data: lead });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+
 export const updateLead = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.params;
     const updateData = req.body;
-    const updatedLead = await Lead.findByIdAndUpdate(id, updateData, { new: true });
-    if (!updatedLead) {
+
+    const lead = await Lead.findById(id);
+    if (!lead) {
       return res.status(404).json({ success: false, message: "Lead not found" });
     }
+
+    if (req.user?.role === 'sales' && lead.createdBy?.toString() !== req.user.id) {
+      return res.status(403).json({ success: false, message: "Unauthorized to update this lead" });
+    }
+
+    const updatedLead = await Lead.findByIdAndUpdate(id, updateData, { new: true });
     return res.status(200).json({ success: true, message: "Lead updated successfully", data: updatedLead });
   } catch (error) {
     console.log(error);
@@ -54,6 +80,10 @@ export const allLeads = async (req: Request, res: Response): Promise<any> => {
   try {
     const { status, source, search, sort, page = 1, limit = 10 } = req.query;
     let query: any = {};
+
+    if (req.user?.role === 'sales') {
+      query.createdBy = req.user.id;
+    }
 
     if (status && status !== 'All') query.status = status;
     if (source && source !== 'All') query.source = source;
@@ -96,6 +126,10 @@ export const exportCSV = async (req: Request, res: Response): Promise<any> => {
   try {
     const { status, source, search } = req.query;
     let query: any = {};
+
+    if (req.user?.role === 'sales') {
+      query.createdBy = req.user.id;
+    }
 
     if (status && status !== 'All') query.status = status;
     if (source && source !== 'All') query.source = source;
