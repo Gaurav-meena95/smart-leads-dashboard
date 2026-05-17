@@ -1,10 +1,22 @@
-import app from './app';
-import { connectDB } from './config/db';
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import cors from 'cors';
+import connectDB from './db';
+import authRoutes from './user/authRoutes';
+import leadRoutes from './leads/leadRoutes';
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+connectDB();
+
+app.use('/api/auth', authRoutes);
+app.use('/api/leads', leadRoutes);
 
 const PORT = process.env.PORT || 3000;
 
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

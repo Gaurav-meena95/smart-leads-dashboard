@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
                 <select
                   value={filters.status || 'All'}
                   onChange={(e) => setFilters({ ...filters, status: e.target.value, page: 1 })}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="All">All Statuses</option>
                   <option value="New">New</option>
@@ -152,7 +152,7 @@ const Dashboard: React.FC = () => {
                 <select
                   value={filters.source || 'All'}
                   onChange={(e) => setFilters({ ...filters, source: e.target.value, page: 1 })}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="All">All Sources</option>
                   <option value="Website">Website</option>
@@ -163,7 +163,7 @@ const Dashboard: React.FC = () => {
                 <select
                   value={filters.sort || 'latest'}
                   onChange={(e) => setFilters({ ...filters, sort: e.target.value as 'latest'|'oldest', page: 1 })}
-                  className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="latest">Latest First</option>
                   <option value="oldest">Oldest First</option>
@@ -333,7 +333,7 @@ const Dashboard: React.FC = () => {
             <select
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="New">New</option>
               <option value="Contacted">Contacted</option>
@@ -346,7 +346,7 @@ const Dashboard: React.FC = () => {
             <select
               value={formData.source}
               onChange={(e) => setFormData({ ...formData, source: e.target.value as any })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="Website">Website</option>
               <option value="Instagram">Instagram</option>
