@@ -10,7 +10,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-connectDB();
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: "Database connection failed: " + error.message });
+  }
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
