@@ -87,19 +87,186 @@ smart-leads-dashboard/
 
 ## API Documentation
 
-### Auth Endpoints
-- `POST /api/auth/register`
-- `POST /api/auth/login`
+All request payloads are JSON, and authorization headers expect a Bearer JWT Token (`Authorization: Bearer <token>`).
 
-### Leads Endpoints
-- `GET    /api/leads`
-- `GET    /api/leads/:id`
-- `POST   /api/leads`
-- `PUT    /api/leads/:id`
-- `DELETE /api/leads/:id`
-- `GET    /api/leads/export/csv`
+### 🔑 Authentication Endpoints
 
-### Query Params for GET /api/leads
+#### 1. Register User
+- **Endpoint:** `POST /api/auth/register`
+- **Request Body:**
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "Password123!",
+    "role": "sales" 
+  }
+  ```
+  *(Note: Password must be at least 8 characters, containing at least 1 letter, 1 number, and 1 special character).*
+- **Response (201 Created):**
+  ```json
+  {
+    "success": true,
+    "message": "User created successfully",
+    "data": {
+      "id": "60d0fe4f5311236168a109ca",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "role": "sales"
+    }
+  }
+  ```
+
+#### 2. User Login
+- **Endpoint:** `POST /api/auth/login`
+- **Request Body:**
+  ```json
+  {
+    "email": "john@example.com",
+    "password": "Password123!",
+    "role": "sales"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Login successful",
+    "data": {
+      "user": {
+        "id": "60d0fe4f5311236168a109ca",
+        "name": "John Doe",
+        "email": "john@example.com",
+        "role": "sales"
+      },
+      "accessToken": "eyJhbGciOi...",
+      "refreshToken": "eyJhbGciOi..."
+    }
+  }
+  ```
+
+---
+
+### 📋 Leads Management Endpoints
+
+#### 1. Get All Leads (Paginated, Searchable, Filterable)
+- **Endpoint:** `GET /api/leads`
+- **Headers:** `Authorization: Bearer <token>`
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Leads fetched successfully",
+    "data": [
+      {
+        "_id": "60d0fe4f5311236168a109cb",
+        "name": "Alice Smith",
+        "email": "alice@leads.com",
+        "status": "Qualified",
+        "source": "Web",
+        "createdBy": "60d0fe4f5311236168a109ca",
+        "createdAt": "2026-05-18T05:00:00.000Z"
+      }
+    ],
+    "meta": {
+      "total": 1,
+      "page": 1,
+      "limit": 10,
+      "totalPages": 1
+    }
+  }
+  ```
+  *(Note: Enforces strict Role-Based Access Isolation. Sales users will only receive leads owned by them. Admins receive global access).*
+
+#### 2. Get Lead Details
+- **Endpoint:** `GET /api/leads/:id`
+- **Headers:** `Authorization: Bearer <token>`
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Lead details fetched successfully",
+    "data": {
+      "_id": "60d0fe4f5311236168a109cb",
+      "name": "Alice Smith",
+      "email": "alice@leads.com",
+      "status": "Qualified",
+      "source": "Web",
+      "createdBy": "60d0fe4f5311236168a109ca"
+    }
+  }
+  ```
+
+#### 3. Create Lead
+- **Endpoint:** `POST /api/leads`
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:**
+  ```json
+  {
+    "name": "Alice Smith",
+    "email": "alice@leads.com",
+    "status": "Qualified",
+    "source": "Web"
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "success": true,
+    "message": "Lead created successfully",
+    "data": {
+      "_id": "60d0fe4f5311236168a109cb",
+      "name": "Alice Smith",
+      "email": "alice@leads.com",
+      "status": "Qualified",
+      "source": "Web",
+      "createdBy": "60d0fe4f5311236168a109ca"
+    }
+  }
+  ```
+
+#### 4. Update Lead
+- **Endpoint:** `PUT /api/leads/:id`
+- **Headers:** `Authorization: Bearer <token>`
+- **Request Body:** (Partial updates allowed)
+  ```json
+  {
+    "status": "Won"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Lead updated successfully",
+    "data": {
+      "_id": "60d0fe4f5311236168a109cb",
+      "name": "Alice Smith",
+      "email": "alice@leads.com",
+      "status": "Won",
+      "source": "Web"
+    }
+  }
+  ```
+
+#### 5. Delete Lead (Admin Only)
+- **Endpoint:** `DELETE /api/leads/:id`
+- **Headers:** `Authorization: Bearer <token>`
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Lead deleted successfully"
+  }
+  ```
+  *(Note: Returning 403 Forbidden for Sales users attempting this operation).*
+
+#### 6. Export Filtered Leads to CSV
+- **Endpoint:** `GET /api/leads/export/csv`
+- **Headers:** `Authorization: Bearer <token>`
+- **Response:** CSV Attachment Stream (`leads.csv`)
+
+### Query Params for GET /api/leads and GET /api/leads/export/csv
 
 | Param | Type | Description |
 |---|---|---|
