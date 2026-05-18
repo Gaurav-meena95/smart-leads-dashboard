@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Lead from './leaddb';
 
 export const createLead = async (req: Request, res: Response): Promise<any> => {
@@ -81,8 +82,9 @@ export const allLeads = async (req: Request, res: Response): Promise<any> => {
     const { status, source, search, sort, page = 1, limit = 10 } = req.query;
     let query: any = {};
 
+    console.log("Logged in user context on request:", req.user);
     if (req.user?.role === 'sales') {
-      query.createdBy = req.user.id;
+      query.createdBy = new mongoose.Types.ObjectId(req.user.id);
     }
 
     if (status && status !== 'All') query.status = status;
@@ -97,6 +99,7 @@ export const allLeads = async (req: Request, res: Response): Promise<any> => {
     const sortObj: any = sort === 'oldest' ? { createdAt: 1 } : { createdAt: -1 };
     const skip = (Number(page) - 1) * Number(limit);
 
+    console.log("Final query being executed:", query);
     const leads = await Lead.find(query)
       .sort(sortObj)
       .skip(skip)
@@ -128,7 +131,7 @@ export const exportCSV = async (req: Request, res: Response): Promise<any> => {
     let query: any = {};
 
     if (req.user?.role === 'sales') {
-      query.createdBy = req.user.id;
+      query.createdBy = new mongoose.Types.ObjectId(req.user.id);
     }
 
     if (status && status !== 'All') query.status = status;

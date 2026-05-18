@@ -29,6 +29,15 @@ const Dashboard: React.FC = () => {
     sort: 'latest',
   });
 
+  const displayedLeads = user?.role === 'sales'
+    ? leads.filter(lead => {
+        if (!lead.createdBy || !user) return false;
+        const createdById = lead.createdBy._id || (lead.createdBy as any).id;
+        const loggedInId = (user as any).id || user._id;
+        return createdById === loggedInId || lead.createdBy.email === user.email;
+      })
+    : leads;
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit' | 'view'>('add');
   const [currentLeadId, setCurrentLeadId] = useState<string | null>(null);
@@ -228,14 +237,14 @@ const Dashboard: React.FC = () => {
                     </td>
                   </tr>
                 )}
-                {!loading && leads.length === 0 && (
+                {!loading && displayedLeads.length === 0 && (
                   <tr>
                     <td colSpan={6} className="px-6 py-12">
                       <EmptyState icon={Users} title="No leads found" description="Try adjusting your filters or add a new lead." />
                     </td>
                   </tr>
                 )}
-                {!loading && leads.map((lead) => (
+                {!loading && displayedLeads.map((lead) => (
                   <tr key={lead._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">{lead.name}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{lead.email}</td>

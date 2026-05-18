@@ -18,7 +18,9 @@ app.use(async (req, res, next) => {
     res.status(500).json({ success: false, message: "Database connection failed: " + error.message });
   }
 });
-
+app.get('/', (req, res) => {
+  res.send('smart leads dashboard is running');
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
 
