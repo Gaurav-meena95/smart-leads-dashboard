@@ -1,6 +1,7 @@
 # Smart Leads Dashboard
 
-### 🌐 Live Demo: [https://smart-leads-dashboard-dun.vercel.app/](https://smart-leads-dashboard-dun.vercel.app/)
+### 🌐 Live Demo (Frontend): [https://smart-leads-dashboard-dun.vercel.app/](https://smart-leads-dashboard-dun.vercel.app/)
+### 🔌 Live API (Backend): [https://smart-leads-dashboard-y7gf.vercel.app/](https://smart-leads-dashboard-y7gf.vercel.app/)
 
 ## Tech Stack
 - **Frontend**: React (Vite), TypeScript, Tailwind CSS
