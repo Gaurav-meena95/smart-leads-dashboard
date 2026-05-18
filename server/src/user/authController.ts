@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { validationInput } from '../utils';
 
-const sec_key = process.env.sec_key as string;
+const sec_key = (process.env.sec_key || process.env.JWT_SECRET) as string;
 
 export const signup = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -39,9 +39,9 @@ export const signup = async (req: Request, res: Response): Promise<any> => {
     });
 
     return res.status(201).json({ success: true, message: "User created successfully", data: newUser });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    return res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res.status(500).json({ success: false, message: error?.message || "Internal Server Error" });
   }
 };
 
@@ -79,8 +79,8 @@ export const login = async (req: Request, res: Response): Promise<any> => {
         refreshToken
       }
     });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
-    return res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res.status(500).json({ success: false, message: error?.message || "Internal Server Error" });
   }
 };
