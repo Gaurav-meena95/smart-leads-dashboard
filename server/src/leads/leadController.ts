@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import Lead from './leaddb';
+import User from '../user/userdb';
 
 export const createLead = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -12,6 +13,12 @@ export const createLead = async (req: Request, res: Response): Promise<any> => {
       source,
       createdBy: req.user?.id
     });
+
+    // Save lead reference in user document
+    await User.findByIdAndUpdate(req.user?.id, {
+      $push: { leads: newLead._id }
+    });
+
     return res.status(201).json({ success: true, message: "Lead created successfully", data: newLead });
   } catch (error) {
     console.log(error);
@@ -70,6 +77,12 @@ export const deleteLead = async (req: Request, res: Response): Promise<any> => {
     if (!deletedLead) {
       return res.status(404).json({ success: false, message: "Lead not found" });
     }
+
+    // Pull lead reference from user document
+    await User.findByIdAndUpdate(deletedLead.createdBy, {
+      $pull: { leads: deletedLead._id }
+    });
+
     return res.status(200).json({ success: true, message: "Lead deleted successfully", data: {} });
   } catch (error) {
     console.log(error);

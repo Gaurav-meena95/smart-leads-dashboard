@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 
 export interface IUser extends Document {
   name: string;
@@ -6,6 +6,7 @@ export interface IUser extends Document {
   password?: string;
   role: 'admin' | 'sales';
   isBlocked: boolean;
+  leads?: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,7 +16,8 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ["admin", "sales"], required: true },
-  isBlocked: { type: Boolean, default: false }
+  isBlocked: { type: Boolean, default: false },
+  leads: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lead' }]
 }, { timestamps: true });
 
 export default mongoose.model<IUser>('User', userSchema);
